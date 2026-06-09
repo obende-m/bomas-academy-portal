@@ -45,7 +45,7 @@ function AboutPage() {
 
 export function PageHero({ eyebrow, title, subtitle }: { eyebrow: string; title: string; subtitle?: string }) {
   return (
-    <section className="container-wide pt-32 pb-16 md:pt-40 md:pb-20">
+    <section className="container-wide pt-12 pb-16 md:pt-16 md:pb-20">
       <p className="reveal text-xs uppercase tracking-[0.32em] text-accent">{eyebrow}</p>
       <h1 className="reveal reveal-delay-1 mt-4 max-w-4xl font-display text-5xl md:text-7xl leading-[1.05]">{title}</h1>
       {subtitle && <p className="reveal reveal-delay-2 mt-6 max-w-2xl text-lg text-muted-foreground">{subtitle}</p>}

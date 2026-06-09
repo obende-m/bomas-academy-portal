@@ -1,7 +1,7 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
-import logoAsset from "@/assets/bomas-logo.jpg.asset.json";
+import logoAsset from "@/assets/bomas-logo.jpg";
 
 const nav = [
   { to: "/", label: "Home" },
@@ -37,13 +37,13 @@ export function SiteHeader() {
       <div className="container-wide flex h-20 items-center justify-between gap-6">
         <Link to="/" className="flex items-center gap-3 group">
           <img
-            src={logoAsset.url}
+            src={logoAsset}
             alt="Bomas Academy"
             className="h-12 w-12 rounded-full ring-1 ring-border transition-transform group-hover:rotate-[6deg]"
           />
           <div className="leading-tight">
             <div className="font-display text-lg font-semibold text-foreground">Bomas Academy</div>
-            <div className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">Jos · Plateau</div>
+            <div className="text-[10px] italic text-red-500">…inspiring learning for greatness</div>
           </div>
         </Link>
 

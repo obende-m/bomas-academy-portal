@@ -7,7 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useIsAdmin, useSession } from "@/lib/use-auth";
 import { uploadMedia } from "@/lib/media";
 import { DEFAULTS } from "@/lib/use-site-content";
-import logoAsset from "@/assets/bomas-logo.jpg.asset.json";
+import logoAsset from "@/assets/bomas-logo.jpg";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({ meta: [{ title: "Admin — Bomas Academy" }] }),
@@ -36,24 +36,29 @@ function AdminPage() {
   if (!session) return null;
 
   return (
-    <div className="container-wide pt-28 pb-24">
+    <div className="container-wide pt-10 pb-24">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <img src={logoAsset.url} alt="" className="h-10 w-10 rounded-full ring-1 ring-border" />
+          <img src={logoAsset} alt="" className="h-10 w-10 rounded-full ring-1 ring-border" />
           <div>
             <h1 className="font-display text-2xl">Admin dashboard</h1>
             <p className="text-xs text-muted-foreground">Signed in as {session.user.email}</p>
           </div>
         </div>
-        <button
-          onClick={async () => {
-            await supabase.auth.signOut();
-            navigate({ to: "/" });
-          }}
-          className="inline-flex items-center gap-2 rounded-full border border-border px-4 py-2 text-sm hover:bg-secondary"
-        >
-          <LogOut className="h-4 w-4" /> Sign out
-        </button>
+        <div className="flex items-center gap-2">
+          <Link to="/" className="inline-flex items-center gap-2 rounded-full border border-border px-4 py-2 text-sm hover:bg-secondary">
+            ← Home
+          </Link>
+          <button
+            onClick={async () => {
+              await supabase.auth.signOut();
+              navigate({ to: "/" });
+            }}
+            className="inline-flex items-center gap-2 rounded-full border border-border px-4 py-2 text-sm hover:bg-secondary"
+          >
+            <LogOut className="h-4 w-4" /> Sign out
+          </button>
+        </div>
       </div>
 
       {!isAdmin ? (
@@ -398,9 +403,11 @@ type NewsRow = {
   body: string;
   cover_image_url: string | null;
   published: boolean;
+  published_at: string;
 };
 
 function NewsForm({ post, onClose, onSaved }: { post: NewsRow | null; onClose: () => void; onSaved: () => void }) {
+  const todayISO = new Date().toISOString().split("T")[0];
   const [form, setForm] = useState({
     title: post?.title ?? "",
     slug: post?.slug ?? "",
@@ -408,6 +415,7 @@ function NewsForm({ post, onClose, onSaved }: { post: NewsRow | null; onClose: (
     body: post?.body ?? "",
     cover_image_url: post?.cover_image_url ?? "",
     published: post?.published ?? true,
+    published_at: post?.published_at ? post.published_at.split("T")[0] : todayISO,
   });
   const [busy, setBusy] = useState(false);
 
@@ -459,6 +467,10 @@ function NewsForm({ post, onClose, onSaved }: { post: NewsRow | null; onClose: (
           <input type="checkbox" checked={form.published} onChange={(e) => setForm({ ...form, published: e.target.checked })} />
           Published
         </label>
+        <div className="inline-flex items-center gap-2 text-sm text-muted-foreground">
+          <span>Date:</span>
+          <input type="date" value={form.published_at} onChange={(e) => setForm({ ...form, published_at: e.target.value })} className="rounded-md border border-border bg-background px-2 py-1 text-sm text-foreground" />
+        </div>
       </div>
       <button onClick={save} disabled={busy} className="inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm text-primary-foreground hover:bg-navy-deep disabled:opacity-60">
         {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}

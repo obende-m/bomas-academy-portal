@@ -1,8 +1,8 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import logoAsset from "@/assets/bomas-logo.jpg.asset.json";
+import logoAsset from "@/assets/bomas-logo.jpg";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({ meta: [{ title: "Admin sign in — Bomas Academy" }] }),
@@ -48,10 +48,10 @@ function AuthPage() {
   };
 
   return (
-    <div className="min-h-[100svh] -mt-20 grid place-items-center bg-secondary/60 px-6 pt-20">
+    <div className="min-h-[100svh] grid place-items-center bg-secondary/60 px-6 py-8">
       <div className="w-full max-w-md rounded-3xl bg-background p-8 shadow-xl shadow-black/5 border border-border">
         <div className="flex items-center gap-3">
-          <img src={logoAsset.url} alt="" className="h-10 w-10 rounded-full ring-1 ring-border" />
+          <img src={logoAsset} alt="" className="h-10 w-10 rounded-full ring-1 ring-border" />
           <div>
             <div className="font-display text-lg">Bomas Academy</div>
             <div className="text-xs uppercase tracking-widest text-muted-foreground">Admin area</div>
@@ -92,6 +92,9 @@ function AuthPage() {
         <p className="mt-6 text-xs text-muted-foreground">
           Note: after creating the first account, it must be granted admin permissions from the backend before content can be edited.
         </p>
+        <Link to="/" className="mt-6 inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
+          ← Back to home
+        </Link>
       </div>
     </div>
   );

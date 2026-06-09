@@ -16,7 +16,7 @@ export const Route = createFileRoute("/news")({
 });
 
 function NewsPage() {
-  const { data: posts } = useQuery({
+  const { data: posts, isLoading, error } = useQuery({
     queryKey: ["news_list"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -33,7 +33,11 @@ function NewsPage() {
     <>
       <PageHero eyebrow="Newsroom" title="What's happening at Bomas." />
       <section className="container-wide pb-24">
-        {posts && posts.length > 0 ? (
+        {isLoading ? (
+          <p className="text-muted-foreground">Loading stories…</p>
+        ) : error ? (
+          <p className="text-destructive text-sm">Failed to load news: {(error as Error).message}</p>
+        ) : posts && posts.length > 0 ? (
           <div className="divide-y divide-border border-y border-border">
             {posts.map((p) => (
               <Link
@@ -59,7 +63,7 @@ function NewsPage() {
           </div>
         ) : (
           <p className="text-muted-foreground">No stories yet — check back soon.</p>
-        )}
+        ) }
       </section>
     </>
   );

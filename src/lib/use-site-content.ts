@@ -30,10 +30,11 @@ export const DEFAULTS: SiteContent = {
   "admissions.intro": "",
   "admissions.steps": "",
   "admissions.cta": "Apply now",
-  "contact.address": "Jos, Plateau State, Nigeria",
-  "contact.phone": "+234 800 000 0000",
-  "contact.email": "info@bomasacademy.ng",
+  "contact.address": "No 10 Metropolitan Crescent G.R.A, Jos, Nigeria",
+  "contact.phone": "0803 605 8313",
+  "contact.email": "bomasacademy@gmail.com",
   "contact.hours": "Mon – Fri · 7:30am – 4:00pm",
+  "contact.facebook": "facebook.com/bomasacademy",
 };
 
 export function useSiteContent() {

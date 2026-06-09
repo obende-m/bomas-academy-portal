@@ -36,7 +36,7 @@ function NewsDetail() {
   if (!data) throw notFound();
 
   return (
-    <article className="container-wide pt-32 pb-24 max-w-3xl">
+    <article className="container-wide pt-12 pb-24 md:pt-16 max-w-3xl">
       <Link to="/news" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-accent">
         <ArrowLeft className="h-4 w-4" /> Back to news
       </Link>
