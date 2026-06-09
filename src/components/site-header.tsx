@@ -30,10 +30,8 @@ export function SiteHeader() {
 
   return (
     <header
-      className={`sticky top-0 z-40 w-full transition-all duration-300 ${
-        scrolled
-          ? "bg-background/95 backdrop-blur-md shadow-[0_1px_0_0_var(--border)]"
-          : "bg-background/80 backdrop-blur-md"
+      className={`sticky top-0 z-40 w-full transition-all duration-300 bg-background ${
+        scrolled ? "shadow-[0_1px_0_0_var(--border)]" : ""
       }`}
     >
       <div className="container-wide flex h-20 items-center justify-between gap-6">
