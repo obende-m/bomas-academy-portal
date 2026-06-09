@@ -48,9 +48,56 @@ function NewsDetail() {
         <img src={data.cover_image_url} alt="" className="mt-10 w-full rounded-2xl aspect-[16/9] object-cover" />
       )}
       {data.excerpt && <p className="mt-10 text-xl text-muted-foreground leading-relaxed">{data.excerpt}</p>}
-      <div className="prose prose-lg mt-8 max-w-none whitespace-pre-line text-foreground/90 leading-relaxed">
-        {data.body}
-      </div>
+      <NewsBody body={data.body} />
     </article>
+  );
+}
+
+function NewsBody({ body }: { body: string }) {
+  // Lightweight renderer: supports paragraphs and markdown images: ![alt](url)
+  const blocks = body.split(/\n{2,}/);
+  const imgRe = /^!\[([^\]]*)\]\(([^)]+)\)\s*$/;
+  return (
+    <div className="mt-10 space-y-6 text-foreground/90 leading-relaxed text-lg">
+      {blocks.map((block, i) => {
+        const trimmed = block.trim();
+        const m = trimmed.match(imgRe);
+        if (m) {
+          return (
+            <img
+              key={i}
+              src={m[2]}
+              alt={m[1]}
+              loading="lazy"
+              className="w-full rounded-2xl aspect-[4/3] object-cover bg-secondary"
+            />
+          );
+        }
+        // mixed lines — split by single newline, render images inline as standalone blocks
+        const lines = trimmed.split(/\n/);
+        if (lines.some((l) => imgRe.test(l.trim()))) {
+          return (
+            <div key={i} className="space-y-6">
+              {lines.map((l, j) => {
+                const im = l.trim().match(imgRe);
+                if (im) {
+                  return (
+                    <img
+                      key={j}
+                      src={im[2]}
+                      alt={im[1]}
+                      loading="lazy"
+                      className="w-full rounded-2xl aspect-[4/3] object-cover bg-secondary"
+                    />
+                  );
+                }
+                return l.trim() ? <p key={j}>{l}</p> : null;
+              })}
+            </div>
+          );
+        }
+        return <p key={i}>{trimmed}</p>;
+      })}
+    </div>
   );
 }
