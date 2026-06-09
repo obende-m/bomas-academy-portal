@@ -447,7 +447,8 @@ function NewsForm({ post, onClose, onSaved }: { post: NewsRow | null; onClose: (
       <input placeholder="Title" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value, slug: form.slug || slugify(e.target.value) })} className="w-full rounded-md border border-border bg-background px-3 py-2 text-base" />
       <input placeholder="URL slug" value={form.slug} onChange={(e) => setForm({ ...form, slug: slugify(e.target.value) })} className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm font-mono" />
       <textarea placeholder="Short excerpt (shown on listings)" rows={2} value={form.excerpt ?? ""} onChange={(e) => setForm({ ...form, excerpt: e.target.value })} className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm" />
-      <textarea placeholder="Body" rows={10} value={form.body} onChange={(e) => setForm({ ...form, body: e.target.value })} className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm" />
+      <textarea placeholder={"Body — write paragraphs separated by blank lines.\nEmbed images using:  ![alt text](https://image-url.jpg)"} rows={12} value={form.body} onChange={(e) => setForm({ ...form, body: e.target.value })} className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm" />
+      <p className="text-xs text-muted-foreground">Tip: paste an image URL inside <code className="rounded bg-background px-1 py-0.5">![caption](url)</code> on its own line to embed it in the post.</p>
       <div className="flex flex-wrap items-center gap-4">
         <label className="inline-flex items-center gap-2 rounded-md border border-dashed border-border bg-background px-3 py-2 text-sm cursor-pointer hover:bg-secondary">
           <Upload className="h-4 w-4" /> {form.cover_image_url ? "Replace cover" : "Upload cover image"}
