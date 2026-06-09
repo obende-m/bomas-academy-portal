@@ -1,0 +1,14 @@
+GRANT SELECT ON public.news_posts TO anon, authenticated;
+GRANT INSERT, UPDATE, DELETE ON public.news_posts TO authenticated;
+GRANT ALL ON public.news_posts TO service_role;
+GRANT SELECT ON public.gallery_images TO anon, authenticated;
+GRANT INSERT, UPDATE, DELETE ON public.gallery_images TO authenticated;
+GRANT ALL ON public.gallery_images TO service_role;
+GRANT SELECT ON public.staff TO anon, authenticated;
+GRANT INSERT, UPDATE, DELETE ON public.staff TO authenticated;
+GRANT ALL ON public.staff TO service_role;
+GRANT SELECT ON public.site_content TO anon, authenticated;
+GRANT INSERT, UPDATE, DELETE ON public.site_content TO authenticated;
+GRANT ALL ON public.site_content TO service_role;
+GRANT SELECT ON public.user_roles TO authenticated;
+GRANT ALL ON public.user_roles TO service_role;
