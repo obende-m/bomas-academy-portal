@@ -50,8 +50,8 @@ function AuthPage() {
   return (
     <div className="min-h-[100svh] grid place-items-center bg-secondary/60 px-6 py-8">
       <div className="w-full max-w-md rounded-3xl bg-background p-8 shadow-xl shadow-black/5 border border-border">
-        <div className="flex items-center gap-3">
-          <img src={logoAsset} alt="" className="h-10 w-10 rounded-full ring-1 ring-border" />
+        <div className="flex items-center gap-3 group">
+          <img src={logoAsset} alt="" className="h-10 w-10 rounded-full ring-1 ring-border transition-transform group-hover:rotate-[6deg]" />
           <div>
             <div className="font-display text-lg">Bomas Academy</div>
             <div className="text-xs uppercase tracking-widest text-muted-foreground">Admin area</div>

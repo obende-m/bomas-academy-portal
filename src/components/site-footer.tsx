@@ -1,20 +1,27 @@
 import { Link } from "@tanstack/react-router";
+import { Facebook, Instagram, Youtube, X as XIcon } from "lucide-react";
 import { useSiteContent } from "@/lib/use-site-content";
 import logoAsset from "@/assets/bomas-logo.jpg";
 
 export function SiteFooter() {
   const c = useSiteContent();
+  const socials = [
+    { Icon: Facebook, href: c["contact.facebook"], label: "Facebook" },
+    { Icon: Instagram, href: c["contact.instagram"], label: "Instagram" },
+    { Icon: XIcon, href: c["contact.x"], label: "X" },
+    { Icon: Youtube, href: c["contact.youtube"], label: "YouTube" },
+  ].filter((s) => s.href);
   return (
     <footer className="mt-24 bg-navy-deep text-[oklch(0.96_0.01_80)]">
       <div className="container-wide py-16 grid gap-12 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
         <div>
-          <div className="flex items-center gap-3">
-            <img src={logoAsset} alt="" className="h-12 w-12 rounded-full ring-1 ring-white/20" />
+          <Link to="/" className="flex items-center gap-3 group w-fit">
+            <img src={logoAsset} alt="" className="h-12 w-12 rounded-full ring-1 ring-white/20 transition-transform group-hover:rotate-[6deg]" />
             <div>
               <div className="font-display text-xl text-white">Bomas Academy</div>
               <div className="text-xs uppercase tracking-[0.18em] text-white/60">Est. in Jos</div>
             </div>
-          </div>
+          </Link>
           <p className="mt-3 text-sm italic text-red-400">…inspiring learning for greatness</p>
           <p className="mt-4 max-w-sm text-sm leading-relaxed text-white/70">
             A nurturing learning community shaping confident, curious and compassionate young
@@ -27,6 +34,7 @@ export function SiteFooter() {
           <ul className="mt-4 space-y-2 text-sm text-white/70">
             <li><Link to="/about" className="hover:text-accent">About</Link></li>
             <li><Link to="/academics" className="hover:text-accent">Academics</Link></li>
+            <li><Link to="/school-life" className="hover:text-accent">School Life</Link></li>
             <li><Link to="/admissions" className="hover:text-accent">Admissions</Link></li>
             <li><Link to="/staff" className="hover:text-accent">Staff</Link></li>
           </ul>
@@ -50,15 +58,24 @@ export function SiteFooter() {
             <li>
               <a href={`mailto:${c["contact.email"]}`} className="hover:text-accent">{c["contact.email"]}</a>
             </li>
-            {c["contact.facebook"] && (
-              <li>
-                <a href={`https://${c["contact.facebook"]}`} target="_blank" rel="noopener noreferrer" className="hover:text-accent">
-                  Facebook
-                </a>
-              </li>
-            )}
             <li className="text-white/50">{c["contact.hours"]}</li>
           </ul>
+          {socials.length > 0 && (
+            <div className="mt-5 flex items-center gap-3">
+              {socials.map(({ Icon, href, label }) => (
+                <a
+                  key={label}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={label}
+                  className="flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-white/70 transition-colors hover:border-accent hover:text-accent"
+                >
+                  <Icon className="h-4 w-4" />
+                </a>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 

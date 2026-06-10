@@ -38,8 +38,8 @@ function AdminPage() {
   return (
     <div className="container-wide pt-10 pb-24">
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <img src={logoAsset} alt="" className="h-10 w-10 rounded-full ring-1 ring-border" />
+        <div className="flex items-center gap-3 group">
+          <img src={logoAsset} alt="" className="h-10 w-10 rounded-full ring-1 ring-border transition-transform group-hover:rotate-[6deg]" />
           <div>
             <h1 className="font-display text-2xl">Admin dashboard</h1>
             <p className="text-xs text-muted-foreground">Signed in as {session.user.email}</p>

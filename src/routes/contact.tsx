@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Mail, MapPin, Phone, Clock } from "lucide-react";
+import { Mail, MapPin, Phone, Clock, Facebook, Instagram, Youtube, X as XIcon } from "lucide-react";
 import { useSiteContent } from "@/lib/use-site-content";
 import { PageHero } from "./about";
 
@@ -23,6 +23,12 @@ function ContactPage() {
     { Icon: Mail, label: "Email", value: c["contact.email"] },
     { Icon: Clock, label: "Office hours", value: c["contact.hours"] },
   ];
+  const socials = [
+    { Icon: Facebook, href: c["contact.facebook"], label: "Facebook" },
+    { Icon: Instagram, href: c["contact.instagram"], label: "Instagram" },
+    { Icon: XIcon, href: c["contact.x"], label: "X" },
+    { Icon: Youtube, href: c["contact.youtube"], label: "YouTube" },
+  ].filter((s) => s.href);
   return (
     <>
       <PageHero eyebrow="Contact" title="Come say hello." subtitle="We'd love to meet your family and show you around our campus in Jos." />
@@ -39,6 +45,25 @@ function ContactPage() {
               </div>
             </div>
           ))}
+          {socials.length > 0 && (
+            <div>
+              <div className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Follow us</div>
+              <div className="mt-3 flex items-center gap-3">
+                {socials.map(({ Icon, href, label }) => (
+                  <a
+                    key={label}
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={label}
+                    className="flex h-10 w-10 items-center justify-center rounded-full bg-accent/20 text-navy-deep transition-colors hover:bg-accent"
+                  >
+                    <Icon className="h-4 w-4" />
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
         <form
           className="rounded-2xl bg-secondary/60 p-8 space-y-4"
