@@ -3,6 +3,20 @@ import { Facebook, Instagram, Youtube, X as XIcon } from "lucide-react";
 import { useSiteContent } from "@/lib/use-site-content";
 import logoAsset from "@/assets/bomas-logo.jpg";
 
+const QUICK_LINKS = [
+  { to: "/", label: "Home" },
+  { to: "/about", label: "About" },
+  { to: "/academics", label: "Academics" },
+  { to: "/admissions", label: "Admissions" },
+  { to: "/facilities", label: "Facilities" },
+  { to: "/gallery", label: "Gallery" },
+  { to: "/news", label: "News" },
+  { to: "/downloads", label: "Downloads" },
+  { to: "/contact", label: "Contact" },
+  { to: "/school-life", label: "School Life" },
+  { to: "/staff", label: "Staff" },
+] as const;
+
 export function SiteFooter() {
   const c = useSiteContent();
   const socials = [
@@ -13,7 +27,7 @@ export function SiteFooter() {
   ].filter((s) => s.href);
   return (
     <footer className="mt-24 bg-navy-deep text-[oklch(0.96_0.01_80)]">
-      <div className="container-wide py-16 grid gap-12 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
+      <div className="container-wide py-16 grid gap-12 md:grid-cols-[1.4fr_1fr_1fr]">
         <div>
           <Link to="/" className="flex items-center gap-3 group w-fit">
             <img src={logoAsset} alt="" className="h-12 w-12 rounded-full ring-1 ring-white/20 transition-transform group-hover:rotate-[6deg]" />
@@ -30,23 +44,11 @@ export function SiteFooter() {
         </div>
 
         <div>
-          <h4 className="text-sm font-semibold text-white">Explore</h4>
-          <ul className="mt-4 space-y-2 text-sm text-white/70">
-            <li><Link to="/about" className="hover:text-accent">About</Link></li>
-            <li><Link to="/academics" className="hover:text-accent">Academics</Link></li>
-            <li><Link to="/school-life" className="hover:text-accent">School Life</Link></li>
-            <li><Link to="/admissions" className="hover:text-accent">Admissions</Link></li>
-            <li><Link to="/staff" className="hover:text-accent">Staff</Link></li>
-          </ul>
-        </div>
-
-        <div>
-          <h4 className="text-sm font-semibold text-white">Discover</h4>
-          <ul className="mt-4 space-y-2 text-sm text-white/70">
-            <li><Link to="/gallery" className="hover:text-accent">Gallery</Link></li>
-            <li><Link to="/news" className="hover:text-accent">News</Link></li>
-            <li><Link to="/contact" className="hover:text-accent">Contact</Link></li>
-            <li><Link to="/auth" className="hover:text-accent">Admin sign in</Link></li>
+          <h4 className="text-sm font-semibold text-white">Quick Links</h4>
+          <ul className="mt-4 grid grid-cols-2 gap-x-6 gap-y-2 text-sm text-white/70">
+            {QUICK_LINKS.map((link) => (
+              <li key={link.to}><Link to={link.to} className="hover:text-accent">{link.label}</Link></li>
+            ))}
           </ul>
         </div>
 
@@ -82,7 +84,10 @@ export function SiteFooter() {
       <div className="border-t border-white/10">
         <div className="container-wide py-6 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-white/50">
           <span>© {new Date().getFullYear()} Bomas Academy. All rights reserved.</span>
-          <span>Built by Runa Labs</span>
+          <span className="flex items-center gap-4">
+            <Link to="/auth" className="hover:text-accent">Admin sign in</Link>
+            <span>Built by Runa Labs</span>
+          </span>
         </div>
       </div>
     </footer>

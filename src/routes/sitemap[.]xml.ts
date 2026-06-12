@@ -7,7 +7,7 @@ export const Route = createFileRoute("/sitemap.xml")({
   server: {
     handlers: {
       GET: async () => {
-        const paths = ["/", "/about", "/academics", "/admissions", "/staff", "/gallery", "/news", "/contact"];
+        const paths = ["/", "/about", "/academics", "/admissions", "/school-life", "/staff", "/facilities", "/gallery", "/downloads", "/news", "/contact"];
         const urls = paths
           .map((p) => `  <url><loc>${BASE_URL}${p}</loc><changefreq>weekly</changefreq></url>`)
           .join("\n");

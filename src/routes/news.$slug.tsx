@@ -5,7 +5,7 @@ import { ArrowLeft } from "lucide-react";
 
 export const Route = createFileRoute("/news/$slug")({
   head: () => ({
-    meta: [{ title: "Story — Bomas Academy" }],
+    meta: [{ title: "Story - Bomas Academy" }],
   }),
   component: NewsDetail,
   notFoundComponent: () => (

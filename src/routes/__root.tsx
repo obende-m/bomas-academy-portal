@@ -81,10 +81,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Bomas Academy — Jos, Plateau State" },
+      { title: "Bomas Academy - Jos, Plateau State" },
       { name: "description", content: "Bomas Academy is a nurturing learning community in Jos shaping confident, curious and compassionate young minds from early years through senior secondary." },
       { name: "author", content: "Bomas Academy" },
-      { property: "og:title", content: "Bomas Academy — Jos, Plateau State" },
+      { property: "og:title", content: "Bomas Academy - Jos, Plateau State" },
       { property: "og:description", content: "A nurturing learning community in Jos shaping confident, curious and compassionate young minds." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

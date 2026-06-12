@@ -5,16 +5,16 @@ import classroomImg from "@/assets/classroom.jpg";
 export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
-      { title: "About — Bomas Academy" },
-      { name: "description", content: "Our story, mission and vision — building a school for the children of Jos." },
-      { property: "og:title", content: "About — Bomas Academy" },
-      { property: "og:description", content: "Our story, mission and vision — building a school for the children of Jos." },
+      { title: "About - Bomas Academy" },
+      { name: "description", content: "The story behind Bomas Academy, and the mission and vision guiding our school for the children of Jos." },
+      { property: "og:title", content: "About - Bomas Academy" },
+      { property: "og:description", content: "The story behind Bomas Academy, and the mission and vision guiding our school for the children of Jos." },
     ],
   }),
   component: AboutPage,
 });
 
-const VALUE_LETTERS: Record<string, string> = {
+export const VALUE_LETTERS: Record<string, string> = {
   bravery: "B",
   opportunity: "O",
   mastery: "M",
@@ -50,13 +50,37 @@ function AboutPage() {
           <h2 className="mt-3 font-display text-3xl md:text-4xl">The BOMAS Core Values.</h2>
           <p className="mt-4 text-lg text-muted-foreground">{c["about.values.intro"]}</p>
         </div>
-        <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-5">
+        {/* Tablet/desktop: grid of cards */}
+        <div className="mt-12 hidden gap-6 sm:grid sm:grid-cols-2 lg:grid-cols-5">
           {values.map((v) => (
             <div key={v.letter} className="rounded-2xl bg-secondary/70 p-6 transition-all hover:bg-secondary hover:-translate-y-1">
               <div className="font-display text-4xl text-accent">{v.letter}</div>
               <h3 className="mt-3 font-display text-xl">{v.title}</h3>
               <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{v.body}</p>
               <p className="mt-4 text-sm font-medium italic text-foreground">"{v.motto}"</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Mobile: sticky stacking cards that collapse to a "B - Bravery" header as you scroll */}
+        <div className="relative mt-6 sm:hidden">
+          {values.map((v, i) => (
+            <div
+              key={v.letter}
+              className="sticky overflow-hidden rounded-3xl bg-secondary shadow-xl ring-1 ring-border/50"
+              style={{ top: `calc(5rem + ${i * 3.5}rem)`, height: "22rem", zIndex: i + 1 }}
+            >
+              <div className="flex h-14 shrink-0 items-center gap-3 border-b border-border/60 bg-secondary px-6">
+                <span className="font-display text-2xl text-accent">{v.letter}</span>
+                <span className="text-muted-foreground">-</span>
+                <span className="font-display text-lg">{v.title}</span>
+              </div>
+              <div className="px-6 py-6">
+                <div className="font-display text-6xl text-accent">{v.letter}</div>
+                <h3 className="mt-3 font-display text-2xl">{v.title}</h3>
+                <p className="mt-3 text-base leading-relaxed text-muted-foreground">{v.body}</p>
+                <p className="mt-4 text-sm font-medium italic text-foreground">"{v.motto}"</p>
+              </div>
             </div>
           ))}
         </div>

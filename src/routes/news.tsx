@@ -6,9 +6,9 @@ import { PageHero } from "./about";
 export const Route = createFileRoute("/news")({
   head: () => ({
     meta: [
-      { title: "News — Bomas Academy" },
+      { title: "News - Bomas Academy" },
       { name: "description", content: "Announcements, events and stories from Bomas Academy." },
-      { property: "og:title", content: "News — Bomas Academy" },
+      { property: "og:title", content: "News - Bomas Academy" },
       { property: "og:description", content: "Announcements, events and stories from Bomas Academy." },
     ],
   }),
@@ -62,7 +62,7 @@ function NewsPage() {
             ))}
           </div>
         ) : (
-          <p className="text-muted-foreground">No stories yet — check back soon.</p>
+          <p className="text-muted-foreground">No stories yet. Check back soon.</p>
         ) }
       </section>
     </>

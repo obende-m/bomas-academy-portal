@@ -6,9 +6,9 @@ import { PageHero } from "./about";
 export const Route = createFileRoute("/contact")({
   head: () => ({
     meta: [
-      { title: "Contact — Bomas Academy" },
+      { title: "Contact - Bomas Academy" },
       { name: "description", content: "Get in touch with the Bomas Academy admissions and main office in Jos, Plateau State." },
-      { property: "og:title", content: "Contact — Bomas Academy" },
+      { property: "og:title", content: "Contact - Bomas Academy" },
       { property: "og:description", content: "Get in touch with the Bomas Academy admissions and main office in Jos, Plateau State." },
     ],
   }),

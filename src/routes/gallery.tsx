@@ -6,10 +6,10 @@ import { PageHero } from "./about";
 export const Route = createFileRoute("/gallery")({
   head: () => ({
     meta: [
-      { title: "Gallery — Bomas Academy" },
-      { name: "description", content: "Moments from life at Bomas Academy — classrooms, events, sports and more." },
-      { property: "og:title", content: "Gallery — Bomas Academy" },
-      { property: "og:description", content: "Moments from life at Bomas Academy — classrooms, events, sports and more." },
+      { title: "Gallery - Bomas Academy" },
+      { name: "description", content: "Moments from life at Bomas Academy, including classrooms, events, sports and more." },
+      { property: "og:title", content: "Gallery - Bomas Academy" },
+      { property: "og:description", content: "Moments from life at Bomas Academy, including classrooms, events, sports and more." },
     ],
   }),
   component: GalleryPage,

@@ -14,6 +14,8 @@ import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SchoolLifeRouteImport } from './routes/school-life'
 import { Route as NewsRouteImport } from './routes/news'
 import { Route as GalleryRouteImport } from './routes/gallery'
+import { Route as FacilitiesRouteImport } from './routes/facilities'
+import { Route as DownloadsRouteImport } from './routes/downloads'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AdmissionsRouteImport } from './routes/admissions'
@@ -46,6 +48,16 @@ const NewsRoute = NewsRouteImport.update({
 const GalleryRoute = GalleryRouteImport.update({
   id: '/gallery',
   path: '/gallery',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FacilitiesRoute = FacilitiesRouteImport.update({
+  id: '/facilities',
+  path: '/facilities',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DownloadsRoute = DownloadsRouteImport.update({
+  id: '/downloads',
+  path: '/downloads',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContactRoute = ContactRouteImport.update({
@@ -97,6 +109,8 @@ export interface FileRoutesByFullPath {
   '/admissions': typeof AdmissionsRoute
   '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
+  '/downloads': typeof DownloadsRoute
+  '/facilities': typeof FacilitiesRoute
   '/gallery': typeof GalleryRoute
   '/news': typeof NewsRouteWithChildren
   '/school-life': typeof SchoolLifeRoute
@@ -112,6 +126,8 @@ export interface FileRoutesByTo {
   '/admissions': typeof AdmissionsRoute
   '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
+  '/downloads': typeof DownloadsRoute
+  '/facilities': typeof FacilitiesRoute
   '/gallery': typeof GalleryRoute
   '/news': typeof NewsRouteWithChildren
   '/school-life': typeof SchoolLifeRoute
@@ -128,6 +144,8 @@ export interface FileRoutesById {
   '/admissions': typeof AdmissionsRoute
   '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
+  '/downloads': typeof DownloadsRoute
+  '/facilities': typeof FacilitiesRoute
   '/gallery': typeof GalleryRoute
   '/news': typeof NewsRouteWithChildren
   '/school-life': typeof SchoolLifeRoute
@@ -145,6 +163,8 @@ export interface FileRouteTypes {
     | '/admissions'
     | '/auth'
     | '/contact'
+    | '/downloads'
+    | '/facilities'
     | '/gallery'
     | '/news'
     | '/school-life'
@@ -160,6 +180,8 @@ export interface FileRouteTypes {
     | '/admissions'
     | '/auth'
     | '/contact'
+    | '/downloads'
+    | '/facilities'
     | '/gallery'
     | '/news'
     | '/school-life'
@@ -175,6 +197,8 @@ export interface FileRouteTypes {
     | '/admissions'
     | '/auth'
     | '/contact'
+    | '/downloads'
+    | '/facilities'
     | '/gallery'
     | '/news'
     | '/school-life'
@@ -191,6 +215,8 @@ export interface RootRouteChildren {
   AdmissionsRoute: typeof AdmissionsRoute
   AuthRoute: typeof AuthRoute
   ContactRoute: typeof ContactRoute
+  DownloadsRoute: typeof DownloadsRoute
+  FacilitiesRoute: typeof FacilitiesRoute
   GalleryRoute: typeof GalleryRoute
   NewsRoute: typeof NewsRouteWithChildren
   SchoolLifeRoute: typeof SchoolLifeRoute
@@ -233,6 +259,20 @@ declare module '@tanstack/react-router' {
       path: '/gallery'
       fullPath: '/gallery'
       preLoaderRoute: typeof GalleryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/facilities': {
+      id: '/facilities'
+      path: '/facilities'
+      fullPath: '/facilities'
+      preLoaderRoute: typeof FacilitiesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/downloads': {
+      id: '/downloads'
+      path: '/downloads'
+      fullPath: '/downloads'
+      preLoaderRoute: typeof DownloadsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contact': {
@@ -312,6 +352,8 @@ const rootRouteChildren: RootRouteChildren = {
   AdmissionsRoute: AdmissionsRoute,
   AuthRoute: AuthRoute,
   ContactRoute: ContactRoute,
+  DownloadsRoute: DownloadsRoute,
+  FacilitiesRoute: FacilitiesRoute,
   GalleryRoute: GalleryRoute,
   NewsRoute: NewsRouteWithChildren,
   SchoolLifeRoute: SchoolLifeRoute,

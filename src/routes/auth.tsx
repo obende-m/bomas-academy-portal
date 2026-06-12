@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import logoAsset from "@/assets/bomas-logo.jpg";
 
 export const Route = createFileRoute("/auth")({
-  head: () => ({ meta: [{ title: "Admin sign in — Bomas Academy" }] }),
+  head: () => ({ meta: [{ title: "Admin sign in - Bomas Academy" }] }),
   component: AuthPage,
 });
 

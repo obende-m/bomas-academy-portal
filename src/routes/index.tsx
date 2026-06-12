@@ -1,19 +1,25 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, BookOpen, Heart, Sparkles } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { useSiteContent } from "@/lib/use-site-content";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import heroImg from "@/assets/hero-campus.jpg";
-import classroomImg from "@/assets/classroom.jpg";
-import scienceImg from "@/assets/science.jpg";
-import playgroundImg from "@/assets/playground.jpg";
+import { WhyBomas } from "@/components/home/why-bomas";
+import { VisionMission } from "@/components/home/vision-mission";
+import { ValuesTeaser } from "@/components/home/values-teaser";
+import { ProgramsOverview } from "@/components/home/programs-overview";
+import { SchoolSnapshot } from "@/components/home/school-snapshot";
+import { FacilitiesPreview } from "@/components/home/facilities-preview";
+import { GalleryPreview } from "@/components/home/gallery-preview";
+import { Testimonials } from "@/components/home/testimonials";
+import { ContactPreview } from "@/components/home/contact-preview";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Bomas Academy — Jos, Plateau State" },
+      { title: "Bomas Academy - Jos, Plateau State" },
       { name: "description", content: "Bomas Academy is a nurturing learning community in Jos shaping confident, curious and compassionate young minds from early years through senior secondary." },
-      { property: "og:title", content: "Bomas Academy — Jos, Plateau State" },
+      { property: "og:title", content: "Bomas Academy - Jos, Plateau State" },
       { property: "og:description", content: "A nurturing learning community in Jos shaping confident, curious and compassionate young minds." },
     ],
   }),
@@ -60,47 +66,16 @@ function Index() {
         </div>
       </section>
 
-      <section className="container-wide py-24 md:py-32">
-        <div className="grid gap-12 md:grid-cols-[1fr_1.2fr] md:gap-20 items-start">
-          <div>
-            <p className="text-xs uppercase tracking-[0.28em] text-accent">Our school</p>
-            <h2 className="mt-4 font-display text-4xl md:text-5xl leading-tight text-foreground">{c["home.intro.title"]}</h2>
-          </div>
-          <div className="space-y-6">
-            <p className="text-lg leading-relaxed text-muted-foreground">{c["home.intro.body"]}</p>
-            <div className="grid grid-cols-3 gap-6 border-t border-border pt-8">
-              <Stat value={c["home.stats.students"]} label="Students" />
-              <Stat value={c["home.stats.teachers"]} label="Teachers" />
-              <Stat value={c["home.stats.years"]} label="Years strong" />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="bg-secondary/60">
-        <div className="container-wide py-24">
-          <div className="max-w-2xl">
-            <p className="text-xs uppercase tracking-[0.28em] text-accent">What we stand for</p>
-            <h2 className="mt-4 font-display text-4xl md:text-5xl text-foreground">Three commitments to every child.</h2>
-          </div>
-          <div className="mt-16 grid gap-12 md:grid-cols-3">
-            <Pillar icon={<BookOpen className="h-6 w-6" />} title="Rigorous, joyful learning" body="A curriculum that meets each learner where they are, then takes them further than they thought possible." />
-            <Pillar icon={<Heart className="h-6 w-6" />} title="Character first" body="Discipline, integrity, and empathy taught not as subjects but as a daily way of being on campus." />
-            <Pillar icon={<Sparkles className="h-6 w-6" />} title="Made for Jos" body="Rooted in our highland community and connected to a wider world — proudly Plateau, proudly Nigerian." />
-          </div>
-        </div>
-      </section>
-
-      <section className="container-wide py-24 md:py-32">
-        <div className="grid grid-cols-12 gap-4 md:gap-6">
-          <img src={classroomImg} alt="Primary classroom" className="col-span-12 md:col-span-7 aspect-[4/3] w-full rounded-2xl object-cover" loading="lazy" />
-          <img src={scienceImg} alt="Science lab" className="col-span-6 md:col-span-5 aspect-[4/5] w-full rounded-2xl object-cover" loading="lazy" />
-          <img src={playgroundImg} alt="Children playing" className="col-span-6 md:col-span-5 md:col-start-8 aspect-square md:aspect-[4/3] w-full rounded-2xl object-cover" loading="lazy" />
-        </div>
-      </section>
+      <WhyBomas />
+      <VisionMission />
+      <ValuesTeaser />
+      <ProgramsOverview />
+      <SchoolSnapshot />
+      <FacilitiesPreview />
+      <GalleryPreview />
 
       {latestNews && latestNews.length > 0 && (
-        <section className="container-wide pb-24 md:pb-32">
+        <section className="container-wide py-24 md:py-32">
           <div className="flex items-end justify-between gap-6 border-b border-border pb-6">
             <div>
               <p className="text-xs uppercase tracking-[0.28em] text-accent">Latest</p>
@@ -131,7 +106,9 @@ function Index() {
         </section>
       )}
 
-      <section className="container-wide pb-24">
+      <Testimonials />
+
+      <section className="container-wide py-24">
         <div className="rounded-3xl bg-navy-deep px-8 py-16 md:p-20 text-center text-white relative overflow-hidden">
           <div className="absolute -top-24 -right-24 h-72 w-72 rounded-full bg-accent/20 blur-3xl" />
           <div className="absolute -bottom-32 -left-24 h-80 w-80 rounded-full bg-accent/10 blur-3xl" />
@@ -143,27 +120,8 @@ function Index() {
           </Link>
         </div>
       </section>
+
+      <ContactPreview />
     </>
-  );
-}
-
-function Stat({ value, label }: { value: string; label: string }) {
-  return (
-    <div>
-      <div className="font-display text-3xl md:text-4xl text-navy-deep">{value}</div>
-      <div className="mt-1 text-xs uppercase tracking-widest text-muted-foreground">{label}</div>
-    </div>
-  );
-}
-
-function Pillar({ icon, title, body }: { icon: React.ReactNode; title: string; body: string }) {
-  return (
-    <div className="group">
-      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-accent/20 text-navy-deep transition-colors group-hover:bg-accent">
-        {icon}
-      </div>
-      <h3 className="mt-6 font-display text-xl text-foreground">{title}</h3>
-      <p className="mt-3 text-muted-foreground leading-relaxed">{body}</p>
-    </div>
   );
 }

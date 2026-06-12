@@ -6,9 +6,9 @@ import { ArrowRight } from "lucide-react";
 export const Route = createFileRoute("/admissions")({
   head: () => ({
     meta: [
-      { title: "Admissions — Bomas Academy" },
+      { title: "Admissions - Bomas Academy" },
       { name: "description", content: "Five simple steps to join the Bomas Academy family in Jos." },
-      { property: "og:title", content: "Admissions — Bomas Academy" },
+      { property: "og:title", content: "Admissions - Bomas Academy" },
       { property: "og:description", content: "Five simple steps to join the Bomas Academy family in Jos." },
     ],
   }),
