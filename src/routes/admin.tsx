@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { LogOut, Loader2, Trash2, Plus, Upload, Save } from "lucide-react";
@@ -190,6 +190,8 @@ function ContentEditor() {
 
 /* -------------------- Staff editor -------------------- */
 
+const BLANK_STAFF = { name: "", position: "", bio: "", photo_url: "", sort_order: 0 };
+
 function StaffEditor() {
   const qc = useQueryClient();
   const { data: staff } = useQuery({
@@ -200,19 +202,30 @@ function StaffEditor() {
       return data ?? [];
     },
   });
-  const [form, setForm] = useState({ name: "", position: "", bio: "", photo_url: "", sort_order: 0 });
+  const [form, setForm] = useState(BLANK_STAFF);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
   const refresh = () => { qc.invalidateQueries({ queryKey: ["staff_admin"] }); qc.invalidateQueries({ queryKey: ["staff"] }); };
 
-  const addStaff = async () => {
+  const startEdit = (s: NonNullable<typeof staff>[number]) => {
+    setEditingId(s.id);
+    setForm({ name: s.name, position: s.position, bio: s.bio ?? "", photo_url: s.photo_url ?? "", sort_order: s.sort_order ?? 0 });
+  };
+
+  const cancelEdit = () => { setEditingId(null); setForm(BLANK_STAFF); };
+
+  const save = async () => {
     if (!form.name || !form.position) return toast.error("Name and position required");
     setBusy(true);
-    const { error } = await supabase.from("staff").insert({ ...form });
+    const payload = { ...form };
+    const { error } = editingId
+      ? await supabase.from("staff").update(payload).eq("id", editingId)
+      : await supabase.from("staff").insert(payload);
     setBusy(false);
     if (error) return toast.error(error.message);
-    toast.success("Staff added");
-    setForm({ name: "", position: "", bio: "", photo_url: "", sort_order: 0 });
+    toast.success(editingId ? "Staff updated" : "Staff added");
+    cancelEdit();
     refresh();
   };
 
@@ -220,6 +233,7 @@ function StaffEditor() {
     if (!confirm("Remove this staff member?")) return;
     const { error } = await supabase.from("staff").delete().eq("id", id);
     if (error) return toast.error(error.message);
+    if (editingId === id) cancelEdit();
     refresh();
   };
 
@@ -238,7 +252,12 @@ function StaffEditor() {
   return (
     <div className="space-y-10">
       <div className="rounded-2xl border border-border p-6 bg-secondary/40">
-        <h3 className="font-display text-xl">Add a staff member</h3>
+        <div className="flex items-center justify-between">
+          <h3 className="font-display text-xl">{editingId ? "Edit staff member" : "Add a staff member"}</h3>
+          {editingId && (
+            <button onClick={cancelEdit} className="text-sm text-muted-foreground hover:text-foreground">Cancel</button>
+          )}
+        </div>
         <div className="mt-4 grid gap-3 md:grid-cols-2">
           <input placeholder="Name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="rounded-md border border-border bg-background px-3 py-2 text-sm" />
           <input placeholder="Position (e.g. Head Teacher)" value={form.position} onChange={(e) => setForm({ ...form, position: e.target.value })} className="rounded-md border border-border bg-background px-3 py-2 text-sm" />
@@ -248,26 +267,44 @@ function StaffEditor() {
             {form.photo_url ? "Replace photo" : "Upload photo"}
             <input type="file" accept="image/*" className="hidden" onChange={uploadPhoto} />
           </label>
-          {form.photo_url && <img src={form.photo_url} alt="" className="h-16 w-16 rounded-full object-cover" />}
+          <div className="flex items-center gap-3">
+            {form.photo_url && <img src={form.photo_url} alt="" className="h-16 w-16 rounded-full object-cover" />}
+            <div className="flex flex-col gap-1">
+              <label className="text-xs text-muted-foreground">Sort order (lower = appears first)</label>
+              <input
+                type="number"
+                value={form.sort_order}
+                onChange={(e) => setForm({ ...form, sort_order: parseInt(e.target.value) || 0 })}
+                className="w-24 rounded-md border border-border bg-background px-3 py-2 text-sm"
+              />
+            </div>
+          </div>
         </div>
-        <button disabled={busy} onClick={addStaff} className="mt-4 inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm text-primary-foreground hover:bg-navy-deep disabled:opacity-60">
-          <Plus className="h-4 w-4" /> Add staff
+        <button disabled={busy} onClick={save} className="mt-4 inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm text-primary-foreground hover:bg-navy-deep disabled:opacity-60">
+          {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : editingId ? <Save className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
+          {editingId ? "Save changes" : "Add staff"}
         </button>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {staff?.map((s) => (
-          <div key={s.id} className="rounded-xl border border-border overflow-hidden bg-card">
+          <div key={s.id} className={`rounded-xl border overflow-hidden bg-card transition-colors ${editingId === s.id ? "border-accent" : "border-border"}`}>
             <div className="aspect-[4/3] bg-secondary">
               {s.photo_url ? <img src={s.photo_url} alt={s.name} className="h-full w-full object-cover" /> : <div className="h-full w-full marquee-gold" />}
             </div>
             <div className="p-4">
               <div className="font-display text-lg">{s.name}</div>
               <div className="text-xs uppercase tracking-widest text-accent">{s.position}</div>
+              {s.sort_order != null && <div className="mt-1 text-xs text-muted-foreground">Order: {s.sort_order}</div>}
               {s.bio && <p className="mt-2 text-sm text-muted-foreground line-clamp-3">{s.bio}</p>}
-              <button onClick={() => remove(s.id)} className="mt-3 inline-flex items-center gap-1 text-xs text-destructive hover:underline">
-                <Trash2 className="h-3 w-3" /> Remove
-              </button>
+              <div className="mt-3 flex items-center gap-3">
+                <button onClick={() => startEdit(s)} className="inline-flex items-center gap-1 text-xs hover:underline">
+                  Edit
+                </button>
+                <button onClick={() => remove(s.id)} className="inline-flex items-center gap-1 text-xs text-destructive hover:underline">
+                  <Trash2 className="h-3 w-3" /> Remove
+                </button>
+              </div>
             </div>
           </div>
         ))}
@@ -298,7 +335,7 @@ function GalleryEditor() {
     try {
       for (const file of Array.from(files)) {
         const url = await uploadMedia(file, "gallery");
-        const { error } = await supabase.from("gallery_images").insert({ image_url: url, title: file.name.replace(/\.[^.]+$/, "") });
+        const { error } = await supabase.from("gallery_images").insert({ image_url: url, title: "" });
         if (error) throw error;
       }
       toast.success("Images uploaded");
@@ -418,6 +455,7 @@ function NewsForm({ post, onClose, onSaved }: { post: NewsRow | null; onClose: (
     published_at: post?.published_at ? post.published_at.split("T")[0] : todayISO,
   });
   const [busy, setBusy] = useState(false);
+  const bodyRef = useRef<HTMLTextAreaElement>(null);
 
   const slugify = (s: string) => s.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 
@@ -430,6 +468,31 @@ function NewsForm({ post, onClose, onSaved }: { post: NewsRow | null; onClose: (
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : "Upload failed");
     } finally { setBusy(false); }
+  };
+
+  const onUploadBodyImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]; if (!file) return;
+    setBusy(true);
+    try {
+      const url = await uploadMedia(file, "news");
+      const textarea = bodyRef.current;
+      const insert = `\n![](${url})\n`;
+      if (textarea) {
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const newBody = form.body.substring(0, start) + insert + form.body.substring(end);
+        setForm((f) => ({ ...f, body: newBody }));
+        setTimeout(() => {
+          textarea.selectionStart = textarea.selectionEnd = start + insert.length;
+          textarea.focus();
+        }, 0);
+      } else {
+        setForm((f) => ({ ...f, body: f.body + insert }));
+      }
+      toast.success("Image uploaded — inserted at cursor");
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : "Upload failed");
+    } finally { setBusy(false); e.target.value = ""; }
   };
 
   const save = async () => {
@@ -455,8 +518,17 @@ function NewsForm({ post, onClose, onSaved }: { post: NewsRow | null; onClose: (
       <input placeholder="Title" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value, slug: form.slug || slugify(e.target.value) })} className="w-full rounded-md border border-border bg-background px-3 py-2 text-base" />
       <input placeholder="URL slug" value={form.slug} onChange={(e) => setForm({ ...form, slug: slugify(e.target.value) })} className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm font-mono" />
       <textarea placeholder="Short excerpt (shown on listings)" rows={2} value={form.excerpt ?? ""} onChange={(e) => setForm({ ...form, excerpt: e.target.value })} className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm" />
-      <textarea placeholder={"Body: write paragraphs separated by blank lines.\nEmbed images using:  ![alt text](https://image-url.jpg)"} rows={12} value={form.body} onChange={(e) => setForm({ ...form, body: e.target.value })} className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm" />
-      <p className="text-xs text-muted-foreground">Tip: paste an image URL inside <code className="rounded bg-background px-1 py-0.5">![caption](url)</code> on its own line to embed it in the post.</p>
+      <div className="space-y-1">
+        <div className="flex items-center gap-3">
+          <span className="text-xs text-muted-foreground">Body</span>
+          <label className="inline-flex items-center gap-1.5 rounded-md border border-dashed border-border bg-background px-2.5 py-1 text-xs cursor-pointer hover:bg-secondary">
+            <Upload className="h-3 w-3" /> Insert image
+            <input type="file" accept="image/*" className="hidden" onChange={onUploadBodyImage} disabled={busy} />
+          </label>
+        </div>
+        <textarea ref={bodyRef} placeholder={"Body: write paragraphs separated by blank lines.\nEmbed images using:  ![alt text](https://image-url.jpg)"} rows={12} value={form.body} onChange={(e) => setForm({ ...form, body: e.target.value })} className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm" />
+      </div>
+      <p className="text-xs text-muted-foreground">Tip: click "Insert image" to upload a photo and drop it at your cursor position in the body.</p>
       <div className="flex flex-wrap items-center gap-4">
         <label className="inline-flex items-center gap-2 rounded-md border border-dashed border-border bg-background px-3 py-2 text-sm cursor-pointer hover:bg-secondary">
           <Upload className="h-4 w-4" /> {form.cover_image_url ? "Replace cover" : "Upload cover image"}

@@ -37,6 +37,14 @@ function AdmissionsPage() {
           <div>
             <p className="text-xs uppercase tracking-[0.28em] text-accent">Ready when you are</p>
             <h2 className="mt-2 font-display text-3xl">{c["admissions.cta"]}</h2>
+            {c["admissions.phone"] && (
+              <a
+                href={`tel:${c["admissions.phone"]}`}
+                className="mt-2 inline-block text-white/75 hover:text-white text-sm"
+              >
+                {c["admissions.phone"]}
+              </a>
+            )}
           </div>
           <Link
             to="/contact"

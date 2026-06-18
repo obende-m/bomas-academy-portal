@@ -67,6 +67,7 @@ export const DEFAULTS: SiteContent = {
   "admissions.intro": "",
   "admissions.steps": "",
   "admissions.cta": "Apply now",
+  "admissions.phone": "07035133328",
   "schoolLife.title": "School Life",
   "schoolLife.intro": "What every Bomas family can expect at school, at home, and in partnership with our teachers.",
   "schoolLife.campus.title": "The Bomas Campus Experience",
