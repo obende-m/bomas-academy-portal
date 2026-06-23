@@ -43,9 +43,6 @@ function GalleryPage() {
                   className="w-full transition-transform duration-700 group-hover:scale-105"
                   loading={i < 3 ? "eager" : "lazy"}
                 />
-                {img.title && (
-                  <figcaption className="px-4 py-3 text-sm text-muted-foreground">{img.title}</figcaption>
-                )}
               </figure>
             ))}
           </div>
