@@ -85,7 +85,7 @@ export function SiteFooter() {
         <div className="container-wide py-6 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-white/50">
           <span>© {new Date().getFullYear()} Bomas Academy. All rights reserved.</span>
           <span className="flex items-center gap-4">
-            <Link to="/auth" className="hover:text-accent">Admin sign in</Link>
+            <Link to="/auth" className="hover:text-accent">Admin</Link>
             <span>Built by Runa Labs</span>
           </span>
         </div>
