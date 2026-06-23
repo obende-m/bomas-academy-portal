@@ -102,6 +102,45 @@ function AdminPage() {
 
 /* -------------------- Content editor -------------------- */
 
+function DocumentUploader({ onUpload }: { onUpload: (name: string, url: string) => void }) {
+  const [uploading, setUploading] = useState(false);
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    try {
+      const url = await uploadMedia(file, "downloads");
+      const displayName = file.name.split(".").slice(0, -1).join(" ").replace(/[-_]/g, " ");
+      onUpload(displayName, url);
+      toast.success("Document uploaded and appended!");
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : "Upload failed");
+    } finally {
+      setUploading(false);
+      e.target.value = "";
+    }
+  };
+
+  return (
+    <label className="mt-1 inline-flex items-center gap-1.5 rounded-lg border border-dashed border-border bg-secondary/40 px-3 py-1.5 text-xs font-medium cursor-pointer hover:bg-secondary w-fit text-muted-foreground hover:text-foreground transition-colors">
+      {uploading ? (
+        <Loader2 className="h-3 w-3 animate-spin" />
+      ) : (
+        <Upload className="h-3 w-3" />
+      )}
+      Upload Document (PDF/Doc)
+      <input
+        type="file"
+        accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt"
+        className="hidden"
+        onChange={handleFileChange}
+        disabled={uploading}
+      />
+    </label>
+  );
+}
+
 function ContentEditor() {
   const qc = useQueryClient();
   const { data, isLoading } = useQuery({
@@ -152,10 +191,22 @@ function ContentEditor() {
           <h3 className="font-display text-xl capitalize border-b border-border pb-2">{group}</h3>
           <div className="mt-6 space-y-6">
             {keys.map((k) => {
-              const isLong = (values[k]?.length ?? 0) > 80 || k.endsWith(".body") || k.endsWith(".story") || k.endsWith(".steps") || k.endsWith(".subtitle") || k.endsWith(".intro") || k.endsWith(".mission") || k.endsWith(".vision") || k.endsWith(".address");
+              const isLong = (values[k]?.length ?? 0) > 80 || k.endsWith(".body") || k.endsWith(".story") || k.endsWith(".steps") || k.endsWith(".subtitle") || k.endsWith(".intro") || k.endsWith(".mission") || k.endsWith(".vision") || k.endsWith(".address") || k.endsWith(".items");
               return (
                 <div key={k} className="grid gap-2 md:grid-cols-[280px_1fr_auto] md:items-start">
-                  <label className="text-xs uppercase tracking-widest text-muted-foreground font-mono pt-3">{k}</label>
+                  <div className="flex flex-col gap-1">
+                    <label className="text-xs uppercase tracking-widest text-muted-foreground font-mono pt-3">{k}</label>
+                    {k === "downloads.items" && (
+                      <DocumentUploader
+                        onUpload={(fileName, url) => {
+                          const currentText = values[k] || "";
+                          const newline = currentText ? "\n" : "";
+                          const updatedText = `${currentText}${newline}${fileName} | ${url}`;
+                          setValues({ ...values, [k]: updatedText });
+                        }}
+                      />
+                    )}
+                  </div>
                   {isLong ? (
                     <textarea
                       rows={Math.max(3, Math.min(10, Math.ceil((values[k]?.length ?? 0) / 80)))}
