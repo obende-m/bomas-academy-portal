@@ -2,6 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Clock, Shirt, Sparkles, MessageCircle, Users, DoorOpen, ShieldCheck, HeartPulse, Globe2 } from "lucide-react";
 import { useSiteContent } from "@/lib/use-site-content";
 import { PageHero } from "./about";
+import schoolLifeBannerImg from "@/assets/school-life-banner.jpg";
+import schoolLifeHomeworkImg from "@/assets/school-life-homework.jpg";
 
 export const Route = createFileRoute("/school-life")({
   head: () => ({
@@ -65,6 +67,18 @@ function SchoolLifePage() {
         </div>
       </section>
 
+      {/* Featured School Life Photo Banner */}
+      <section className="container-wide pb-24">
+        <div className="relative overflow-hidden rounded-3xl aspect-[21/9] shadow-xl group">
+          <img src={schoolLifeBannerImg} alt="Students on campus" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-102" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent flex items-end p-6 md:p-10">
+            <p className="text-white font-display text-2xl md:text-3xl max-w-xl leading-snug">
+              Every day at Bomas is an opportunity to grow, play, and learn together on the plateau.
+            </p>
+          </div>
+        </div>
+      </section>
+
       <section className="bg-secondary/60 py-24">
         <div className="container-wide">
           <div className="max-w-2xl">
@@ -79,11 +93,17 @@ function SchoolLifePage() {
         </div>
       </section>
 
+      {/* Split homework block with photo */}
       <section className="container-wide py-24">
-        <div className="grid gap-12 md:grid-cols-[1fr_1.2fr] items-start">
-          <div>
-            <h2 className="font-display text-3xl md:text-4xl">{c["schoolLife.homework.title"]}</h2>
-            <p className="mt-4 text-lg text-muted-foreground">{c["schoolLife.homework.intro"]}</p>
+        <div className="grid gap-12 md:grid-cols-[1fr_1.2fr] items-center">
+          <div className="grid gap-8">
+            <div>
+              <h2 className="font-display text-3xl md:text-4xl">{c["schoolLife.homework.title"]}</h2>
+              <p className="mt-4 text-lg text-muted-foreground">{c["schoolLife.homework.intro"]}</p>
+            </div>
+            <div className="overflow-hidden rounded-2xl aspect-[4/3] bg-muted shadow-lg">
+              <img src={schoolLifeHomeworkImg} alt="Students doing homework" className="w-full h-full object-cover" />
+            </div>
           </div>
           <div className="divide-y divide-border border-y border-border">
             {homeworkBands.map((b) => (

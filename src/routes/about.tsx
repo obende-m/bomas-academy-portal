@@ -1,6 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useState, useEffect, useCallback } from "react";
 import { useSiteContent } from "@/lib/use-site-content";
-import classroomImg from "@/assets/classroom.jpg";
+import aboutSlide1 from "@/assets/about-slide-1.jpg";
+import aboutSlide2 from "@/assets/about-slide-2.jpg";
+import aboutSlide3 from "@/assets/about-slide-3.jpg";
+import aboutMissionImg from "@/assets/about-mission.jpg";
+import aboutAimsImg from "@/assets/about-aims.jpg";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
@@ -22,6 +27,87 @@ export const VALUE_LETTERS: Record<string, string> = {
   service: "S",
 };
 
+const ABOUT_SLIDES = [
+  { src: aboutSlide1, alt: "Bomas Academy students embracing joyfully on the playground" },
+  { src: aboutSlide2, alt: "Bomas Academy students sitting together on the playground" },
+  { src: aboutSlide3, alt: "Bomas Academy students laughing and hugging on the playground railing" },
+];
+
+function AboutImageSlider() {
+  const [current, setCurrent] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+
+  const goTo = useCallback((index: number) => {
+    setCurrent((index + ABOUT_SLIDES.length) % ABOUT_SLIDES.length);
+  }, []);
+
+  useEffect(() => {
+    if (isPaused) return;
+    const timer = setInterval(() => {
+      setCurrent((prev) => (prev + 1) % ABOUT_SLIDES.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [isPaused]);
+
+  return (
+    <div
+      className="about-slider group relative overflow-hidden rounded-2xl aspect-[4/3] shadow-lg"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+    >
+      {/* Slides */}
+      {ABOUT_SLIDES.map((slide, i) => (
+        <img
+          key={i}
+          src={slide.src}
+          alt={slide.alt}
+          loading={i === 0 ? "eager" : "lazy"}
+          className={`absolute inset-0 w-full h-full object-cover transition-all duration-700 ease-in-out ${
+            i === current
+              ? "opacity-100 scale-100"
+              : "opacity-0 scale-105"
+          }`}
+        />
+      ))}
+
+      {/* Gradient overlay at bottom for dots */}
+      <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-black/40 to-transparent pointer-events-none" />
+
+      {/* Prev / Next buttons */}
+      <button
+        onClick={() => goTo(current - 1)}
+        className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/30 backdrop-blur-sm text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-black/50"
+        aria-label="Previous slide"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+      </button>
+      <button
+        onClick={() => goTo(current + 1)}
+        className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/30 backdrop-blur-sm text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-black/50"
+        aria-label="Next slide"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+      </button>
+
+      {/* Dot indicators */}
+      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2.5">
+        {ABOUT_SLIDES.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => goTo(i)}
+            aria-label={`Go to slide ${i + 1}`}
+            className={`rounded-full transition-all duration-300 ${
+              i === current
+                ? "w-7 h-2.5 bg-white"
+                : "w-2.5 h-2.5 bg-white/50 hover:bg-white/80"
+            }`}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function AboutPage() {
   const c = useSiteContent();
   const values = Object.entries(VALUE_LETTERS).map(([key, letter]) => {
@@ -33,14 +119,21 @@ function AboutPage() {
   return (
     <>
       <PageHero eyebrow="About" title={c["about.title"]} />
-      <section className="container-wide grid gap-16 md:grid-cols-2 pb-24">
-        <div>
-          <p className="text-xs uppercase tracking-[0.28em] text-accent">Mission</p>
-          <p className="mt-4 font-display text-2xl md:text-3xl leading-snug">{c["about.mission"]}</p>
+      
+      {/* Redesigned Mission & Vision Section with split graphic layout */}
+      <section className="container-wide grid gap-12 md:grid-cols-[1.2fr_1fr] items-center pb-24">
+        <div className="grid gap-12">
+          <div>
+            <p className="text-xs uppercase tracking-[0.28em] text-accent">Mission</p>
+            <p className="mt-4 font-display text-2xl md:text-3xl leading-snug">{c["about.mission"]}</p>
+          </div>
+          <div>
+            <p className="text-xs uppercase tracking-[0.28em] text-accent">Vision</p>
+            <p className="mt-4 font-display text-2xl md:text-3xl leading-snug">{c["about.vision"]}</p>
+          </div>
         </div>
-        <div>
-          <p className="text-xs uppercase tracking-[0.28em] text-accent">Vision</p>
-          <p className="mt-4 font-display text-2xl md:text-3xl leading-snug">{c["about.vision"]}</p>
+        <div className="overflow-hidden rounded-2xl aspect-[4/3] bg-muted shadow-lg">
+          <img src={aboutMissionImg} alt="Bomas Academy Mission & Vision" className="w-full h-full object-cover" />
         </div>
       </section>
 
@@ -86,9 +179,10 @@ function AboutPage() {
         </div>
       </section>
 
+      {/* Our Story section with the new auto-sliding Image Carousel */}
       <section className="bg-secondary/60 py-24">
         <div className="container-wide grid gap-12 md:grid-cols-[1.1fr_1fr] items-center">
-          <img src={classroomImg} alt="" className="rounded-2xl aspect-[4/3] object-cover" loading="lazy" />
+          <AboutImageSlider />
           <div>
             <p className="text-xs uppercase tracking-[0.28em] text-accent">Our story</p>
             <h2 className="mt-3 font-display text-3xl md:text-4xl">A school grown on the plateau.</h2>
@@ -97,15 +191,21 @@ function AboutPage() {
         </div>
       </section>
 
-      <section className="container-wide py-24">
-        <p className="text-xs uppercase tracking-[0.28em] text-accent">{c["about.aims.title"]}</p>
-        <div className="mt-8 grid gap-6 md:grid-cols-2">
-          {aims.map((a, i) => (
-            <div key={i} className="flex gap-4 rounded-2xl bg-secondary/70 p-6">
-              <div className="font-display text-2xl text-accent">0{i + 1}</div>
-              <p className="text-lg leading-relaxed">{a}</p>
-            </div>
-          ))}
+      {/* Redesigned Aims Section with split layout (Graphic left, List right) */}
+      <section className="container-wide py-24 grid gap-12 md:grid-cols-[1fr_1.2fr] items-center">
+        <div className="overflow-hidden rounded-2xl aspect-[4/3] bg-muted shadow-lg">
+          <img src={aboutAimsImg} alt="Bomas Academy students learning" className="w-full h-full object-cover" />
+        </div>
+        <div>
+          <p className="text-xs uppercase tracking-[0.28em] text-accent">{c["about.aims.title"]}</p>
+          <div className="mt-8 grid gap-6">
+            {aims.map((a, i) => (
+              <div key={i} className="flex gap-4 rounded-2xl bg-secondary/70 p-6">
+                <div className="font-display text-2xl text-accent">0{i + 1}</div>
+                <p className="text-lg leading-relaxed">{a}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
     </>
