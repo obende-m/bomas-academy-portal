@@ -14,7 +14,7 @@ export const Route = createFileRoute("/admin")({
   component: AdminPage,
 });
 
-type Tab = "content" | "staff" | "gallery" | "news";
+type Tab = "content" | "downloads" | "staff" | "gallery" | "news";
 
 function AdminPage() {
   const navigate = useNavigate();
@@ -75,7 +75,7 @@ function AdminPage() {
       ) : (
         <>
           <div className="mt-10 flex gap-1 border-b border-border overflow-x-auto">
-            {(["content", "staff", "gallery", "news"] as Tab[]).map((t) => (
+            {(["content", "downloads", "staff", "gallery", "news"] as Tab[]).map((t) => (
               <button
                 key={t}
                 onClick={() => setTab(t)}
@@ -90,6 +90,7 @@ function AdminPage() {
           </div>
           <div className="mt-10">
             {tab === "content" && <ContentEditor />}
+            {tab === "downloads" && <DownloadsManager />}
             {tab === "staff" && <StaffEditor />}
             {tab === "gallery" && <GalleryEditor />}
             {tab === "news" && <NewsEditor />}
@@ -250,6 +251,123 @@ function DownloadsListEditor({ value, onChange }: { value: string; onChange: (va
   );
 }
 
+function DownloadsManager() {
+  const qc = useQueryClient();
+  const { data, isLoading } = useQuery({
+    queryKey: ["site_content_downloads"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("site_content").select("key, value");
+      if (error) throw error;
+      const map: Record<string, string> = { ...DEFAULTS };
+      for (const r of data ?? []) map[r.key] = r.value;
+      return map;
+    },
+  });
+
+  const [values, setValues] = useState<Record<string, string>>({});
+  const [saving, setSaving] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (data) setValues(data);
+  }, [data]);
+
+  if (isLoading) {
+    return <Loader2 className="h-5 w-5 animate-spin text-muted-foreground text-center my-10" />;
+  }
+
+  const save = async (key: string) => {
+    setSaving(key);
+    try {
+      const { error } = await supabase
+        .from("site_content")
+        .upsert({ key, value: values[key] ?? "" }, { onConflict: "key" });
+      if (error) throw error;
+      toast.success("Saved successfully");
+      qc.invalidateQueries({ queryKey: ["site_content"] });
+    } catch (e: unknown) {
+      toast.error(e instanceof Error ? e.message : "Save failed");
+    } finally {
+      setSaving(null);
+    }
+  };
+
+  return (
+    <div className="space-y-8">
+      <div>
+        <h2 className="font-display text-2xl">Manage Downloads Page</h2>
+        <p className="text-sm text-muted-foreground mt-1">
+          Configure the downloads page title, introduction text, and uploaded files.
+        </p>
+      </div>
+
+      <div className="grid gap-6 rounded-2xl border border-border bg-secondary/30 p-6">
+        {/* Title */}
+        <div className="space-y-2">
+          <label className="text-xs uppercase tracking-widest text-muted-foreground font-mono">Page Title</label>
+          <div className="flex gap-3">
+            <input
+              type="text"
+              value={values["downloads.title"] ?? ""}
+              onChange={(e) => setValues({ ...values, "downloads.title": e.target.value })}
+              className="flex-1 rounded-md border border-border bg-background px-3 py-2 text-sm"
+              placeholder="Downloads"
+            />
+            <button
+              onClick={() => save("downloads.title")}
+              disabled={saving === "downloads.title"}
+              className="inline-flex items-center gap-1.5 rounded-md bg-primary px-4 py-2 text-xs text-primary-foreground hover:bg-navy-deep disabled:opacity-60 shrink-0"
+            >
+              {saving === "downloads.title" ? <Loader2 className="h-3 w-3 animate-spin" /> : <Save className="h-3 w-3" />}
+              Save
+            </button>
+          </div>
+        </div>
+
+        {/* Intro */}
+        <div className="space-y-2">
+          <label className="text-xs uppercase tracking-widest text-muted-foreground font-mono">Page Introduction</label>
+          <div className="flex gap-3 items-end">
+            <textarea
+              rows={2}
+              value={values["downloads.intro"] ?? ""}
+              onChange={(e) => setValues({ ...values, "downloads.intro": e.target.value })}
+              className="flex-1 rounded-md border border-border bg-background px-3 py-2 text-sm resize-none"
+              placeholder="Forms, prospectuses and policy documents for Bomas Academy families."
+            />
+            <button
+              onClick={() => save("downloads.intro")}
+              disabled={saving === "downloads.intro"}
+              className="inline-flex items-center gap-1.5 rounded-md bg-primary px-4 py-2 text-xs text-primary-foreground hover:bg-navy-deep disabled:opacity-60 shrink-0 mb-0.5"
+            >
+              {saving === "downloads.intro" ? <Loader2 className="h-3 w-3 animate-spin" /> : <Save className="h-3 w-3" />}
+              Save
+            </button>
+          </div>
+        </div>
+
+        {/* Files List */}
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <label className="text-xs uppercase tracking-widest text-muted-foreground font-mono">Document Downloads</label>
+            <button
+              onClick={() => save("downloads.items")}
+              disabled={saving === "downloads.items"}
+              className="inline-flex items-center gap-1.5 rounded-md bg-primary px-4 py-2 text-xs text-primary-foreground hover:bg-navy-deep disabled:opacity-60"
+            >
+              {saving === "downloads.items" ? <Loader2 className="h-3 w-3 animate-spin" /> : <Save className="h-3 w-3" />}
+              Save Document List
+            </button>
+          </div>
+          <DownloadsListEditor
+            value={values["downloads.items"] ?? ""}
+            onChange={(newValue) => setValues({ ...values, "downloads.items": newValue })}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function ContentEditor() {
   const qc = useQueryClient();
   const { data, isLoading } = useQuery({
@@ -271,6 +389,7 @@ function ContentEditor() {
   const groups: Record<string, string[]> = {};
   for (const key of Object.keys(values).sort()) {
     const group = key.split(".")[0];
+    if (group === "downloads") continue; // Exclude downloads from generic content editor
     (groups[group] ||= []).push(key);
   }
 
