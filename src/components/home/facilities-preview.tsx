@@ -1,11 +1,11 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 import { useSiteContent } from "@/lib/use-site-content";
-import classroomImg from "@/assets/classroom.jpg";
-import scienceImg from "@/assets/science.jpg";
+import libraryImg from "@/assets/library.jpg";
+import computerLabImg from "@/assets/science.jpg";
 import playgroundImg from "@/assets/playground.jpg";
 
-const IMAGES = [classroomImg, scienceImg, playgroundImg];
+const IMAGES = [libraryImg, computerLabImg, playgroundImg];
 
 export function FacilitiesPreview() {
   const c = useSiteContent();

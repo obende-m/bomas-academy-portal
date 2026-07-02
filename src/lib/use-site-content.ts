@@ -39,7 +39,7 @@ export const DEFAULTS: SiteContent = {
   "facilities.title": "Our Facilities",
   "facilities.intro": "A safe, well-equipped campus designed to support learning, creativity and play.",
   "facilities.items":
-    "Library | A quiet, well-stocked space where students cultivate a lifelong love of reading and research.\nScience Laboratory | Hands-on equipment for practical lessons in biology, chemistry and physics from primary through senior secondary.\nICT & Computer Lab | Modern computers and internet access support digital literacy across every subject.\nSports Field | A spacious field for football, athletics and PE, encouraging fitness and teamwork.\nMusic & Arts Room | Instruments, art supplies and a performance space for creative expression.\nDining Hall | A bright, welcoming hall serving nutritious meals every school day.",
+    "Library | A quiet, well-stocked space where students cultivate a lifelong love of reading and research.\nICT & Computer Lab | Modern computers and internet access support digital literacy across every subject.\nPlayground | A safe, fun, and spacious outdoor play area for students to socialize, play, and stay active.\nScience Laboratory | Hands-on equipment for practical lessons in biology, chemistry and physics from primary through senior secondary.\nSports Field | A spacious field for football, athletics and PE, encouraging fitness and teamwork.\nMusic & Arts Room | Instruments, art supplies and a performance space for creative expression.\nDining Hall | A bright, welcoming hall serving nutritious meals every school day.",
   "downloads.title": "Downloads",
   "downloads.intro": "Forms, prospectuses and policy documents for Bomas Academy families.",
   "downloads.items": "",

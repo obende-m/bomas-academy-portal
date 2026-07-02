@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Library, FlaskConical, Monitor, Trophy, Music, Utensils } from "lucide-react";
+import { Library, FlaskConical, Monitor, Trophy, Music, Utensils, Smile, HelpCircle } from "lucide-react";
 import { useSiteContent } from "@/lib/use-site-content";
 import { PageHero } from "./about";
 
@@ -15,7 +15,27 @@ export const Route = createFileRoute("/facilities")({
   component: FacilitiesPage,
 });
 
-const ICONS = [Library, FlaskConical, Monitor, Trophy, Music, Utensils];
+const ICON_MAP: Record<string, React.ComponentType<any>> = {
+  library: Library,
+  science: FlaskConical,
+  computer: Monitor,
+  ict: Monitor,
+  sports: Trophy,
+  field: Trophy,
+  music: Music,
+  arts: Music,
+  dining: Utensils,
+  hall: Utensils,
+  playground: Smile,
+};
+
+function getIcon(title: string) {
+  const t = title.toLowerCase();
+  for (const [key, icon] of Object.entries(ICON_MAP)) {
+    if (t.includes(key)) return icon;
+  }
+  return HelpCircle;
+}
 
 function FacilitiesPage() {
   const c = useSiteContent();
@@ -32,8 +52,8 @@ function FacilitiesPage() {
       <PageHero eyebrow="Facilities" title={c["facilities.title"]} subtitle={c["facilities.intro"]} />
       <section className="container-wide pb-24">
         <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-3">
-          {items.map((item, i) => {
-            const Icon = ICONS[i % ICONS.length];
+          {items.map((item) => {
+            const Icon = getIcon(item.title);
             return (
               <div key={item.title} className="group">
                 <div className="flex h-12 w-12 items-center justify-center rounded-full bg-accent/20 text-navy-deep transition-colors group-hover:bg-accent">

@@ -102,7 +102,7 @@ function AdminPage() {
 
 /* -------------------- Content editor -------------------- */
 
-function DocumentUploader({ onUpload }: { onUpload: (name: string, url: string) => void }) {
+function DocumentUploader({ onUpload, disabled }: { onUpload: (name: string, url: string) => void; disabled?: boolean }) {
   const [uploading, setUploading] = useState(false);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -113,8 +113,9 @@ function DocumentUploader({ onUpload }: { onUpload: (name: string, url: string) 
       const url = await uploadMedia(file, "downloads");
       const displayName = file.name.split(".").slice(0, -1).join(" ").replace(/[-_]/g, " ");
       onUpload(displayName, url);
-      toast.success("Document uploaded and appended!");
+      toast.success("Document uploaded successfully!");
     } catch (err: unknown) {
+      console.error("Upload error:", err);
       toast.error(err instanceof Error ? err.message : "Upload failed");
     } finally {
       setUploading(false);
@@ -123,7 +124,7 @@ function DocumentUploader({ onUpload }: { onUpload: (name: string, url: string) 
   };
 
   return (
-    <label className="mt-1 inline-flex items-center gap-1.5 rounded-lg border border-dashed border-border bg-secondary/40 px-3 py-1.5 text-xs font-medium cursor-pointer hover:bg-secondary w-fit text-muted-foreground hover:text-foreground transition-colors">
+    <label className={`inline-flex items-center gap-1.5 rounded-lg border border-dashed border-border bg-secondary/40 px-3 py-1.5 text-xs font-medium cursor-pointer hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors ${disabled ? 'opacity-50 pointer-events-none' : ''}`}>
       {uploading ? (
         <Loader2 className="h-3 w-3 animate-spin" />
       ) : (
@@ -135,9 +136,117 @@ function DocumentUploader({ onUpload }: { onUpload: (name: string, url: string) 
         accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt"
         className="hidden"
         onChange={handleFileChange}
-        disabled={uploading}
+        disabled={uploading || disabled}
       />
     </label>
+  );
+}
+
+function DownloadsListEditor({ value, onChange }: { value: string; onChange: (val: string) => void }) {
+  const items = value
+    .split("\n")
+    .filter(Boolean)
+    .map((line, index) => {
+      const parts = line.split("|");
+      const title = parts[0]?.trim() || "";
+      const url = parts.slice(1).join("|")?.trim() || "";
+      return { id: `${index}-${title}`, title, url };
+    });
+
+  const updateItems = (newItems: typeof items) => {
+    const serialized = newItems
+      .map(item => `${item.title.trim()} | ${item.url.trim()}`)
+      .join("\n");
+    onChange(serialized);
+  };
+
+  const handleTitleChange = (index: number, newTitle: string) => {
+    const next = [...items];
+    next[index] = { ...next[index], title: newTitle };
+    updateItems(next);
+  };
+
+  const handleUrlChange = (index: number, newUrl: string) => {
+    const next = [...items];
+    next[index] = { ...next[index], url: newUrl };
+    updateItems(next);
+  };
+
+  const handleDelete = (index: number) => {
+    const next = items.filter((_, i) => i !== index);
+    updateItems(next);
+  };
+
+  const handleAddManual = () => {
+    const next = [...items, { id: String(Date.now()), title: "New Document", url: "" }];
+    updateItems(next);
+  };
+
+  return (
+    <div className="w-full space-y-4 rounded-xl border border-border bg-secondary/20 p-4">
+      {items.length === 0 ? (
+        <p className="text-sm text-muted-foreground italic">No documents uploaded yet.</p>
+      ) : (
+        <div className="space-y-3">
+          {items.map((item, index) => (
+            <div key={item.id} className="flex flex-col gap-2 rounded-lg border border-border bg-background p-3 sm:flex-row sm:items-center sm:gap-3">
+              <div className="flex-1 space-y-2">
+                <input
+                  type="text"
+                  placeholder="Document Title (e.g. 2026 Prospectus)"
+                  value={item.title}
+                  onChange={(e) => handleTitleChange(index, e.target.value)}
+                  className="w-full rounded border border-border bg-background px-2 py-1 text-sm font-medium"
+                />
+                <div className="flex items-center gap-2">
+                  <input
+                    type="text"
+                    placeholder="Document URL (https://...)"
+                    value={item.url}
+                    onChange={(e) => handleUrlChange(index, e.target.value)}
+                    className="flex-1 rounded border border-border bg-background px-2 py-1 text-xs text-muted-foreground font-mono"
+                  />
+                  {item.url && (
+                    <a
+                      href={item.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-xs text-accent hover:underline shrink-0"
+                    >
+                      Open Link
+                    </a>
+                  )}
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => handleDelete(index)}
+                className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-border text-destructive hover:bg-destructive/10 shrink-0 self-end sm:self-center"
+                title="Delete document"
+              >
+                <Trash2 className="h-4 w-4" />
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+      <div className="flex flex-wrap items-center gap-3 border-t border-border pt-4">
+        <DocumentUploader
+          onUpload={(fileName, url) => {
+            const next = [...items, { id: String(Date.now()), title: fileName, url }];
+            updateItems(next);
+          }}
+        />
+        <button
+          type="button"
+          onClick={handleAddManual}
+          className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-background px-3 py-1.5 text-xs font-medium hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors"
+        >
+          <Plus className="h-3 w-3" />
+          Add Link Manually
+        </button>
+      </div>
+    </div>
   );
 }
 
@@ -196,18 +305,13 @@ function ContentEditor() {
                 <div key={k} className="grid gap-2 md:grid-cols-[280px_1fr_auto] md:items-start">
                   <div className="flex flex-col gap-1">
                     <label className="text-xs uppercase tracking-widest text-muted-foreground font-mono pt-3">{k}</label>
-                    {k === "downloads.items" && (
-                      <DocumentUploader
-                        onUpload={(fileName, url) => {
-                          const currentText = values[k] || "";
-                          const newline = currentText ? "\n" : "";
-                          const updatedText = `${currentText}${newline}${fileName} | ${url}`;
-                          setValues({ ...values, [k]: updatedText });
-                        }}
-                      />
-                    )}
                   </div>
-                  {isLong ? (
+                  {k === "downloads.items" ? (
+                    <DownloadsListEditor
+                      value={values[k] ?? ""}
+                      onChange={(newValue) => setValues({ ...values, [k]: newValue })}
+                    />
+                  ) : isLong ? (
                     <textarea
                       rows={Math.max(3, Math.min(10, Math.ceil((values[k]?.length ?? 0) / 80)))}
                       value={values[k] ?? ""}
