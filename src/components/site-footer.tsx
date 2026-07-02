@@ -86,7 +86,7 @@ export function SiteFooter() {
           <span>© {new Date().getFullYear()} Bomas Academy. All rights reserved.</span>
           <span className="flex items-center gap-4">
             <Link to="/auth" className="hover:text-accent">Admin</Link>
-            <span>Built by Runa Labs</span>
+            <span>Developed by Runa Labs</span>
           </span>
         </div>
       </div>
